@@ -1,4 +1,4 @@
-# openhpi-mooc
+# Open HPI MOOC's
 
 On this place you can find my solutions for the online courses on [OpenHPI](https://open.hpi.de)
  
