@@ -5,5 +5,12 @@ On this place you can find my solution for the online course [Web Technologies b
 
 ## CSS Peer Assessment Exercise.
 
-![Solution for CSS Peer Assessment Exercise](https://github.com/hotfix/openhpi-mooc/blob/master/WebTechnologies/example.PNG "CSS Peer Assessment Exercise")
+![Solution for CSS Peer Assessment Exercise](https://github.com/hotfix/openhpi-mooc/blob/master/WebTechnologies/1.PNG "CSS Peer Assessment Exercise")
 
+Filename: 1.html
+
+## Pong Peer Assessment Exercise.
+
+![Solution for Pong Peer Assessment Exercise](https://github.com/hotfix/openhpi-mooc/blob/master/WebTechnologies/1.PNG "Pong Peer Assessment Exercise")
+
+Filename: pong_canvas_OO_task.hmtl

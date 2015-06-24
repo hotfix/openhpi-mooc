@@ -1,0 +1,245 @@
+<!DOCTYPE html>  
+      
+<html>  
+   <head>  
+      <title>Pong Canvas</title>  
+      <meta charset="utf-8">  
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>  
+      <script>
+         // Define Ball object
+         function Ball (context) {
+            this.context = context
+            this.radius = 10
+            this.init()
+         }
+         // Move the Ball object to its initial position
+         // Methods are added to objects by using the prototype construct
+         Ball.prototype.init = function() {
+            this.x = this.context.width/2
+            this.y = this.context.height/2
+            this.deltaX = 0
+            this.deltaY = 0
+         }
+         // Start to move the Ball. This method will be called when the User hits the Space key.
+         Ball.prototype.start = function() {
+            this.deltaX = 2 * (Math.random() < 0.5 ? -1 : 1)
+            this.deltaY = 4 * (Math.random() < 0.5 ? -1 : 1)
+         }
+         // Calculate the current position of the Ball's left border.  
+         // Based on the Ball's position x, which refers to the Ball's center 
+         // + the current Movement in direction x
+         // - the Ball's radius
+         Ball.prototype.getLeftBoundary = function() {
+            return this.x + this.deltaX - this.radius
+         }
+         // The Ball's lower border
+         Ball.prototype.getBottomBoundary = function() {
+            return this.y + this.deltaY + this.radius
+         }
+         // The Ball's right border
+         Ball.prototype.getRightBoundary = function() {
+            return this.x + this.deltaX + this.radius
+         }
+         // The Ball's upper border
+         Ball.prototype.getTopBoundary = function() {
+            return this.y + this.deltaY - this.radius
+         }
+         // Revert the Ball's movement in direction x. 
+		 // This function will be called whenever the Ball hits the left or right wall.
+         Ball.prototype.switchDirectionX = function() {
+            this.deltaX = -this.deltaX
+         }
+         // Revert the Ball's movement in direction y.
+         Ball.prototype.switchDirectionY = function() {
+            this.deltaY = -this.deltaY
+         }
+         // The Ball's movement
+         Ball.prototype.move = function () {
+            this.x += this.deltaX
+            this.y += this.deltaY
+         }
+         // Drawing the Ball on the canvas
+         Ball.prototype.draw = function () {
+            this.context.ctx.beginPath()
+            this.context.ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true)
+            this.context.ctx.closePath()
+            this.context.ctx.fill()
+         }
+         // Define a collision object
+		 //** Please change code here to complete the game
+         function Collision (context, ball, player1) { //, player2
+            this.context = context
+            this.ball = ball
+            this.player1 = player1
+            //** Please add code here to complete the game
+            
+            //*******************
+         }
+         // Define behavior of Collision between Ball and side walls
+         Collision.prototype.bounceFromSides = function () {
+            if (this.ball.getRightBoundary() > this.context.width || this.ball.getLeftBoundary() < 0) {
+               this.ball.switchDirectionX()
+            }
+         }
+         // Define the event of Collision between Ball and Paddle
+         Collision.prototype.collidesWithPaddle = function (paddle) {
+            return this.ball.x > paddle.x && this.ball.x < paddle.x + paddle.width
+         }
+         // Calculate bounce angle
+         Collision.prototype.calculateRebounce = function (paddle) {
+            return 8 * ((this.ball.x-(paddle.x + paddle.width/2)) / paddle.width)
+         }
+         // Define the behaviour of the Collision between Ball and Paddle
+         Collision.prototype.bounceFromPaddles = function () {
+            if (this.ball.getTopBoundary() < 0) {
+               //** Please change code here to complete the game 
+               //** Only bounce if Ball hits paddle. Add points to the other party when the Ball leaves the game.
+               this.ball.switchDirectionY()
+               //*******************
+            } else if (this.ball.getBottomBoundary() > this.context.height) {
+               if (this.collidesWithPaddle(this.player1)) {
+                  this.ball.deltaX = this.calculateRebounce(this.player1)
+                  this.ball.switchDirectionY()
+               } else {
+                  //** Please add code here to complete the game
+                  //** Activate scoring
+                  
+                  this.ball.init()
+               }
+            }
+         }
+         // Define the Paddle object
+         function Paddle (context, player) {
+            this.rightDown = false
+            this.leftDown = false
+            this.x = 50
+            this.height = 10
+            this.width = 75
+            this.context = context
+            this.player = player
+            if (player == 1) {
+               this.y = context.height-this.height
+               this.keyLeft = 37  //Use the arrow keys to move player1's paddle
+               this.keyRight = 39
+            } else {
+               this.y = 0 
+               this.keyLeft = 65  //Use the keys "a" and "d" to move player2's paddle
+               this.keyRight = 68
+            }
+         }
+         // Define the movement of the paddle
+         Paddle.prototype.move = function () {
+            if (this.rightDown) {
+               if(this.x + this.width + 5 <= this.context.width) {
+                  this.x += 5
+               }
+            } else if (this.leftDown) {
+               if(this.x - 5 >= 0) {
+                  this.x -= 5
+               }
+            }
+         }
+         // Draw the paddle
+         Paddle.prototype.draw = function () {
+            this.context.ctx.beginPath()
+            this.context.ctx.rect(this.x, this.y, this.width, this.height)
+            this.context.ctx.closePath()
+            this.context.ctx.fill()
+         }
+         // Define the paddles reaction on key events
+         Paddle.prototype.onKeyEvent = function (evt, isDown) {
+            if (evt.keyCode == this.keyRight) this.rightDown = isDown
+            else if (evt.keyCode == this.keyLeft) this.leftDown = isDown
+         }
+         
+         Paddle.prototype.score = function () {
+            //** Please add code here to complete the game 
+            
+         }
+         
+         // Define GameContext as an object
+         function GameContext () {
+            var canvas = document.getElementById('playground');
+            this.ctx = canvas.getContext("2d"); 
+            this.width = canvas.width;
+            this.height = canvas.height;
+         }
+         // Remove all objects from the canvas
+         GameContext.prototype.clear = function () {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+         }
+         // jQuery 
+         $(document).ready(function() {
+               // Create GameContext
+               var context = new GameContext()
+               // Create Paddle for player1
+               var player1 = new Paddle(context, 1)
+               //** Please add code here to complete the game
+               //** Add a paddle for the second player
+               
+               //*******************
+               // Create a Ball
+               var ball = new Ball(context)
+               // Create a Collision object
+               //** Please change code here to complete the game
+               //** Make player2 known to the collision object
+               var collision = new Collision(context, ball, player1) 
+               //*******************
+               
+               // Start Animation by passing the draw function
+               // Second argument: MilliSeconds
+               var intervalId = setInterval(draw, 10)
+               
+               // Define what is going to happen when a key is pressed
+               function onKeyDown(evt) {
+                  // All keys have a numerical code. 32 is the code for the space key
+                  if (evt.keyCode == 32) ball.start()
+                  else {
+                     // We have already defined earlier on on which keys the paddles will react
+                     player1.onKeyEvent(evt, true)
+                     //** Please add code here to complete the game
+                     //** Let player2 react on key down
+                     
+                     //*******************
+                  }
+               }
+
+               // Funktion die die Reaktion auf einen Tastaturevent (Taste losgelassen)  definiert
+               function onKeyUp(evt) {
+                  player1.onKeyEvent(evt, false)
+                  //** Please add code here to complete the game
+                  //** Let player2 react on key up
+                  
+                  //*******************
+               }
+               // Pass the functions that just have been defined to the documents eventHandlers using jQuery 
+               $(document).keydown(onKeyDown)
+               $(document).keyup(onKeyUp)
+               // Define the function that will be called by setInterval to draw the scene
+               function draw() {
+                  context.clear()
+                  player1.move()
+                  player1.draw()
+                  //** Please add code here to complete the game
+                  
+                  
+                  //*******************
+                  collision.bounceFromSides()
+                  collision.bounceFromPaddles()
+                  ball.move()
+                  ball.draw()
+               }
+            });  
+         </script>  
+         
+         <style>
+            #playground { border: 1px solid black;}
+         </style>
+        </head>  
+      
+        <body>  
+            <canvas id="playground" playgroundWidth="720" height="500"></canvas>  
+            <div><label for="score_player1">Player 1</label><input type="number" value="0" id="score_player1"></div>
+            <div><label for="score_player2">Player 2</label><input type="number" value="0" id="score_player2"></div>
+        </body>  
+    </html>  
