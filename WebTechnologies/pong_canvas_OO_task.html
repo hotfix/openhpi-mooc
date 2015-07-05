@@ -67,12 +67,12 @@
          }
          // Define a collision object
 		 //** Please change code here to complete the game
-         function Collision (context, ball, player1) { //, player2
+         function Collision (context, ball, player1, player2) {
             this.context = context
             this.ball = ball
             this.player1 = player1
             //** Please add code here to complete the game
-            
+             this.player2 = player2
             //*******************
          }
          // Define behavior of Collision between Ball and side walls
@@ -87,14 +87,22 @@
          }
          // Calculate bounce angle
          Collision.prototype.calculateRebounce = function (paddle) {
+
             return 8 * ((this.ball.x-(paddle.x + paddle.width/2)) / paddle.width)
          }
          // Define the behaviour of the Collision between Ball and Paddle
          Collision.prototype.bounceFromPaddles = function () {
+
             if (this.ball.getTopBoundary() < 0) {
-               //** Please change code here to complete the game 
-               //** Only bounce if Ball hits paddle. Add points to the other party when the Ball leaves the game.
-               this.ball.switchDirectionY()
+                if (this.collidesWithPaddle(this.player2)) {
+                    this.ball.deltaX = this.calculateRebounce(this.player2)
+                    this.ball.switchDirectionY()
+                } else {
+                    //** Please add code here to complete the game
+                    //** Activate scoring
+                    this.player1.score()
+                    this.ball.init()
+                }
                //*******************
             } else if (this.ball.getBottomBoundary() > this.context.height) {
                if (this.collidesWithPaddle(this.player1)) {
@@ -103,8 +111,8 @@
                } else {
                   //** Please add code here to complete the game
                   //** Activate scoring
-                  
-                  this.ball.init()
+                   this.player2.score()
+                   this.ball.init()
                }
             }
          }
@@ -153,7 +161,12 @@
          }
          
          Paddle.prototype.score = function () {
-            //** Please add code here to complete the game 
+            //** Please add code here to complete the game
+             if (this.player == 1 ) {
+                 document.getElementById('score_player1').value =  parseInt(document.getElementById('score_player1').value) + 1;
+             }else if (this.player == 2){
+                 document.getElementById('score_player2').value = parseInt(document.getElementById('score_player2').value) + 1;
+             }
             
          }
          
@@ -176,17 +189,17 @@
                var player1 = new Paddle(context, 1)
                //** Please add code here to complete the game
                //** Add a paddle for the second player
-               
+               var player2 = new Paddle(context, 2)
                //*******************
                // Create a Ball
                var ball = new Ball(context)
                // Create a Collision object
                //** Please change code here to complete the game
                //** Make player2 known to the collision object
-               var collision = new Collision(context, ball, player1) 
-               //*******************
-               
-               // Start Animation by passing the draw function
+               var collision = new Collision(context, ball, player1,player2)
+               //******************
+
+             // Start Animation by passing the draw function
                // Second argument: MilliSeconds
                var intervalId = setInterval(draw, 10)
                
@@ -199,7 +212,7 @@
                      player1.onKeyEvent(evt, true)
                      //** Please add code here to complete the game
                      //** Let player2 react on key down
-                     
+                      player2.onKeyEvent(evt, true)
                      //*******************
                   }
                }
@@ -209,7 +222,7 @@
                   player1.onKeyEvent(evt, false)
                   //** Please add code here to complete the game
                   //** Let player2 react on key up
-                  
+                   player2.onKeyEvent(evt, false)
                   //*******************
                }
                // Pass the functions that just have been defined to the documents eventHandlers using jQuery 
@@ -221,7 +234,8 @@
                   player1.move()
                   player1.draw()
                   //** Please add code here to complete the game
-                  
+                  player2.move()
+                  player2.draw()
                   
                   //*******************
                   collision.bounceFromSides()
