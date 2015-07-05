@@ -23,4 +23,4 @@ On this place you can find my solution for the online course [Web Technologies b
 - Add a second player with a paddle that can be controlled via two different keys ("A" and "D') on the same keyboard.
 - Get the counter working. It should count the points of each player. Player 1 gets a point whenever the ball passes player 2 and is out/reset to the start position.
 
-[Solution for Pong Weekly Assignment](./pong_canvas_OO_task.png)
+![Solution for Pong Weekly Assignment](./pong_canvas_OO_task.png)
